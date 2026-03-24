@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANAN RAJESH — Biomedical Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-1: #111111;
+    --bg-2: #161616;
+    --bg-3: #1e1e1e;
+    --border: #2a2a2a;
+    --border-bright: #3d3d3d;
+    --text: #e8e8e8;
+    --text-dim: #888;
+    --text-dimmer: #555;
+    --accent: #c8a96e;
+    --accent-dim: #7a6240;
+    --accent-red: #c85a4a;
+    --accent-green: #6ea87a;
+    --accent-blue: #5a8ab4;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 40%, rgba(200,169,110,0.04) 100%);
+    backdrop-filter: blur(28px) saturate(160%) brightness(1.08);
+    -webkit-backdrop-filter: blur(28px) saturate(160%) brightness(1.08);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 1px 0 0 rgba(255,255,255,0.04) inset, 0 -1px 0 0 rgba(0,0,0,0.3) inset, 0 8px 32px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 48px;
+    border-top: 1px solid rgba(255,255,255,0.10);
+  }
+
+  nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.00) 60%);
+    pointer-events: none;
+  }
+
+  nav::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(200,169,110,0.35) 25%, rgba(90,138,180,0.35) 50%, rgba(110,168,122,0.35) 75%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links { display: flex; gap: 0; list-style: none; }
+
+  .nav-links a {
+    display: block;
+    padding: 0 1.25rem;
+    height: 48px;
+    line-height: 48px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dimmer);
+    padding-left: 1.25rem;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1.5rem;
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border-bright);
+    padding: 0.3rem 0.65rem;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--accent); }
+  .toggle-icon { font-size: 11px; line-height: 1; transition: transform 0.4s ease; }
+  body.light .toggle-icon { transform: rotate(180deg); }
+
+  /* ─── LIGHT MODE ─── */
+  body.light {
+    --bg: #f2f0ec;
+    --bg-1: #eae8e3;
+    --bg-2: #e0ddd7;
+    --bg-3: #d4d1ca;
+    --border: #c8c4bb;
+    --border-bright: #b0aca2;
+    --text: #1a1916;
+    --text-dim: #5a5650;
+    --text-dimmer: #9a9690;
+    --accent: #8a6830;
+    --accent-dim: #c4a060;
+    --accent-red: #a03828;
+    --accent-green: #3a7848;
+    --accent-blue: #2a5a8a;
+  }
+  body.light nav {
+    background: linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 40%, rgba(200,169,110,0.12) 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 1px 0 0 rgba(255,255,255,0.8) inset, 0 8px 32px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+    border-top: 1px solid rgba(255,255,255,0.9);
+  }
+  body.light nav::before { background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.0) 60%); }
+  body.light .hero-right { background: var(--bg-1); }
+  body.light .terminal { background: var(--bg-2); }
+  body.light .terminal-bar { background: var(--bg-3); }
+  body.light .skill-cell { background: var(--bg-1); }
+  body.light .skill-cell:hover { background: var(--bg-2); }
+  body.light .contact-cell { background: var(--bg-1); }
+  body.light .meta-cell { background: var(--bg); }
+  body.light .project-item:hover { background: var(--bg-2); }
+  body.light .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  body.light .btn-primary:hover { background: #7a5820; border-color: #7a5820; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    padding-top: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6rem 4rem 6rem 5rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .hero-title-line2 {
+    color: var(--text-dimmer);
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-family: var(--mono);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+  }
+
+  .hero-desc {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 480px;
+    margin-bottom: 3rem;
+  }
+
+  .hero-ctas { display: flex; gap: 0; flex-wrap: wrap; }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border-bright);
+    color: var(--text-dim);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--bg-2); color: var(--text); border-color: var(--accent); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #d4b87a; border-color: #d4b87a; color: var(--bg); }
+
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+    background: var(--bg-1);
+    position: relative;
+  }
+
+  .terminal {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    background: var(--bg-3);
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .t-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .t-dot.r { background: #c85a4a; }
+  .t-dot.y { background: #c8a96e; }
+  .t-dot.g { background: #6ea87a; }
+  .terminal-label { margin-left: auto; font-size: 10px; color: var(--text-dimmer); letter-spacing: 0.1em; }
+  .terminal-body { padding: 1.25rem 1.5rem; line-height: 1.9; }
+
+  .t-comment { color: var(--text-dimmer); }
+  .t-key { color: var(--accent-blue); }
+  .t-val { color: var(--accent-green); }
+  .t-str { color: var(--accent); }
+  .t-num { color: var(--accent-red); }
+  .t-bracket { color: var(--text-dimmer); }
+  .t-cursor {
+    display: inline-block; width: 8px; height: 14px;
+    background: var(--accent);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom; margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+    margin-top: 1rem;
+  }
+
+  .meta-cell { background: var(--bg); padding: 1rem; }
+  .meta-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 0.4rem; }
+  .meta-val { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  .meta-val.accent { color: var(--accent); }
+
+  /* ─── SECTIONS ─── */
+  .section { border-top: 1px solid var(--border); padding: 5rem 5rem; }
+
+  .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+  .section-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; }
+  .section-title { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── EXPERIENCE ─── */
+  .exp-grid { display: grid; grid-template-columns: 200px 1fr; gap: 0; }
+  .exp-item { display: contents; }
+  .exp-item:not(:last-child) .exp-date,
+  .exp-item:not(:last-child) .exp-content { border-bottom: 1px solid var(--border); }
+
+  .exp-date { padding: 2rem 2rem 2rem 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
+  .exp-date-range { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.08em; }
+  .exp-date-org { font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); }
+  .exp-content { padding: 2rem 0 2rem 2rem; }
+  .exp-role { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; letter-spacing: 0.03em; }
+  .exp-org { font-family: var(--sans); font-size: 12px; color: var(--text-dimmer); margin-bottom: 1rem; letter-spacing: 0.02em; }
+
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .exp-bullets li { font-size: 13px; color: var(--text-dim); line-height: 1.6; padding-left: 1.2rem; position: relative; }
+  .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--accent-dim); font-family: var(--mono); }
+
+  .tag { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid var(--border-bright); color: var(--text-dimmer); margin-right: 0.35rem; margin-top: 0.75rem; }
+  .tag.green { border-color: var(--accent-green); color: var(--accent-green); }
+  .tag.blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .tag.amber { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── SKILLS ─── */
+  .skills-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .skill-cell { background: var(--bg-1); padding: 1.75rem; transition: background 0.15s; }
+  .skill-cell:hover { background: var(--bg-2); }
+  .skill-cell-icon { font-family: var(--mono); font-size: 18px; color: var(--accent); margin-bottom: 0.75rem; }
+  .skill-cell-title { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); margin-bottom: 0.5rem; }
+  .skill-cell-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+
+  /* ─── PROJECTS ─── */
+  .project-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
+  .project-item { display: grid; grid-template-columns: 80px 1fr auto; align-items: start; gap: 2rem; padding: 1.75rem 2rem; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .project-item:last-child { border-bottom: none; }
+  .project-item:hover { background: var(--bg-2); }
+  .project-index { font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); padding-top: 2px; }
+  .project-name { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+  .project-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+  .project-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.6rem; border: 1px solid; white-space: nowrap; }
+  .badge-active { color: var(--accent-green); border-color: var(--accent-green); }
+  .badge-complete { color: var(--text-dimmer); border-color: var(--border-bright); }
+  .badge-published { color: var(--accent-blue); border-color: var(--accent-blue); }
+
+  /* ─── PHOTO GRID ─── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 280px;
+    gap: 3px;
+  }
+  .photo-item { position: relative; overflow: hidden; background: var(--bg-3); cursor: pointer; }
+  .photo-item.photo-tall { grid-row: span 2; }
+  .photo-item.photo-wide { grid-column: span 2; }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(100%) contrast(1.05); transition: transform 0.5s ease, filter 0.4s ease; }
+  .photo-item:hover img { transform: scale(1.04); filter: grayscale(80%) contrast(1.1); }
+  .photo-overlay { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 1rem; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%); opacity: 0; transition: opacity 0.3s ease; }
+  .photo-item:hover .photo-overlay { opacity: 1; }
+  .photo-overlay span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+
+  /* ─── CONTACT ─── */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .contact-cell { background: var(--bg-1); padding: 2.5rem; }
+  .contact-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 0.6rem; }
+  .contact-val { font-family: var(--mono); font-size: 14px; color: var(--text); }
+  .contact-val a { color: var(--accent); text-decoration: none; }
+  .contact-val a:hover { text-decoration: underline; }
+
+  /* ─── FOOTER ─── */
+  footer { border-top: 1px solid var(--border); padding: 1.5rem 5rem; display: flex; justify-content: space-between; align-items: center; }
+  footer p { font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); letter-spacing: 0.1em; }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AR<span>_</span>ANAN RAJESH</div>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Capabilities</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#photography">Photography</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    Available for opportunities
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+      <span class="toggle-icon">◐</span>
+      <span id="toggleLabel">Light</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-label">Biomedical Researcher</div>
+    <h1>ANAN<br>RAJESH</h1>
+    <div class="hero-title-line2">BSc Hons. Biomedical Science</div>
+    <p class="hero-desc">
+      Penultimate-year student at The University of Edinburgh with hands-on research experience spanning molecular neuroscience, bioinformatics, microbiology, and computational drug discovery. Interested in advancing biomedical research at the intersection of wet-lab science and data-driven analysis.
+    </p>
+    <div class="hero-ctas">
+      <a href="#experience" class="btn btn-primary">View Experience</a>
+      <a href="mailto:ananthajithrajesh@gmail.com" class="btn">Get In Touch</a>
+      <a href="https://www.linkedin.com/in/anan-rajesh/" class="btn" target="_blank">LinkedIn</a>
+      <a href="https://soundcloud.com/ananthajith-rajesh/sets/gaussian-blur-with-bonus" class="btn" target="_blank">SoundCloud</a>
+      <a href="Anan_Rajesh_CV.pdf" download class="btn">↓ CV</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="t-dot r"></div>
+        <div class="t-dot y"></div>
+        <div class="t-dot g"></div>
+        <div class="terminal-label">PROFILE.json</div>
+      </div>
+      <div class="terminal-body">
+        <span class="t-bracket">{</span><br>
+        &nbsp;&nbsp;<span class="t-key">"name"</span><span class="t-bracket">:</span> <span class="t-str">"Anan Rajesh"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"location"</span><span class="t-bracket">:</span> <span class="t-str">"Edinburgh, UK"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"institution"</span><span class="t-bracket">:</span> <span class="t-str">"University of Edinburgh"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"degree"</span><span class="t-bracket">:</span> <span class="t-str">"BSc Hons. Biomedical Science"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"year"</span><span class="t-bracket">:</span> <span class="t-num">3</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"articles_edited"</span><span class="t-bracket">:</span> <span class="t-num">80</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"research_funding"</span><span class="t-bracket">:</span> <span class="t-str">"£641"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"society_members_led"</span><span class="t-bracket">:</span> <span class="t-num">90</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"soundcloud"</span><span class="t-bracket">:</span> <span class="t-str">"gaussian-blur-with-bonus"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"focus"</span><span class="t-bracket">: [</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"molecular neuroscience"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"cancer biology"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"bioinformatics"</span><span class="t-bracket">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"drug discovery"</span><br>
+        &nbsp;&nbsp;<span class="t-bracket">],</span><br>
+        &nbsp;&nbsp;<span class="t-key">"status"</span><span class="t-bracket">:</span> <span class="t-val">"open_to_opportunities"</span><br>
+        <span class="t-bracket">}</span><span class="t-cursor"></span>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-cell">
+        <div class="meta-label">Current Role</div>
+        <div class="meta-val accent">Biology Dept. Head</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">ENSA</div>
+        <div class="meta-val">Oct 2023 – Present</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">PAL Scheme</div>
+        <div class="meta-val">Leader · May 2025</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Internships</div>
+        <div class="meta-val accent">3 Completed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="section fade-in" id="experience">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">Work Experience</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="exp-grid">
+    <div class="exp-item">
+      <div class="exp-date">
+        <div class="exp-date-range">Jul – Nov 2025</div>
+        <div class="exp-date-org">Edinburgh</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Research Intern</div>
+        <div class="exp-org">Doitsidou Lab · Centre of Discovery Brain Sciences, University of Edinburgh</div>
+        <ul class="exp-bullets">
+          <li>Established a protein extraction protocol for lysing <em>C. elegans</em> whilst maintaining enzyme activity; designed a data analysis template in MS Excel for protein and enzyme quantification.</li>
+          <li>Gained hands-on experience in fluorescence microscopy, worm behavioural assays, Bradford/BCA protein quantification, genotyping, and cryopreservation.</li>
+          <li>Maintained GLP compliance through rigorous documentation of experiments, instruments, and laboratory protocols.</li>
+          <li>Optimised protocol to reduce noise; managed stock ordering and lab upkeep.</li>
+        </ul>
+        <span class="tag green">Wet Lab</span>
+        <span class="tag">C. elegans</span>
+        <span class="tag blue">Protein Biochemistry</span>
+        <span class="tag">GLP</span>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-date">
+        <div class="exp-date-range">May 2025 – Present</div>
+        <div class="exp-date-org">Edinburgh</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Biology Department Head</div>
+        <div class="exp-org">Edinburgh Scientific Research Association</div>
+        <ul class="exp-bullets">
+          <li>Guided ~90 society members in developing research proposals and applying for grants.</li>
+          <li>Led weekly meetings and workshops as main facilitator; managed lab space allocations.</li>
+          <li>Curated a list of 5 projects based on research gaps for new society members.</li>
+        </ul>
+        <span class="tag amber">Leadership</span>
+        <span class="tag">Grant Writing</span>
+        <span class="tag">Mentorship</span>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-date">
+        <div class="exp-date-range">Aug 2024 – Present</div>
+        <div class="exp-date-org">Remote · Bournemouth</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Medical Article Editor</div>
+        <div class="exp-org">Klarity Health</div>
+        <ul class="exp-bullets">
+          <li>Edited and revised over 80 medical and scientific articles to improve accuracy and accessibility for broad audiences.</li>
+          <li>Verified references and statistics to maintain credibility; adhered to company quality standards.</li>
+        </ul>
+        <span class="tag">Science Communication</span>
+        <span class="tag blue">Editorial</span>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-date">
+        <div class="exp-date-range">May – Aug 2024</div>
+        <div class="exp-date-org">Bangalore, India</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Bioinformatics Research Intern</div>
+        <div class="exp-org">BioNome Pvt. Ltd.</div>
+        <ul class="exp-bullets">
+          <li>Performed molecular docking, molecular dynamic simulation, and ADMET analysis (SwissADME, CADD) targeting 5-alpha-reductase for an in-silico drug discovery project.</li>
+          <li>Contributed data and drafted sections of a manuscript on phytochemical interactions; collaborated across research departments.</li>
+        </ul>
+        <span class="tag blue">Bioinformatics</span>
+        <span class="tag">Drug Discovery</span>
+        <span class="tag">MD Simulation</span>
+        <span class="tag amber">Scientific Writing</span>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-date">
+        <div class="exp-date-range">Oct 2023 – Present</div>
+        <div class="exp-date-org">Edinburgh</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Team Member</div>
+        <div class="exp-org">Edinburgh Scientific Research Association</div>
+        <ul class="exp-bullets">
+          <li><strong>Year 1:</strong> Investigated effects of cortisol on <em>S. salivarius</em> in stress-related oral health — awarded £641 research funding.</li>
+          <li><strong>Year 2:</strong> Contributed to a scoping review on microRNAs and the gut–brain axis.</li>
+          <li><strong>Year 3:</strong> Examined caffeine as a potential anti-microbial on <em>S. cerevisiae</em> and <em>S. epidermidis</em> as a model of the nasal microbiome. Acknowledged by Prof. Debby Bogaert, Centre of Inflammation Research, UoE.</li>
+        </ul>
+        <span class="tag green">Research</span>
+        <span class="tag">Microbiology</span>
+        <span class="tag">Literature Review</span>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-date">
+        <div class="exp-date-range">Jun 2022</div>
+        <div class="exp-date-org">Industry</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Researcher Shadowing</div>
+        <div class="exp-org">Credora Life Sciences</div>
+        <ul class="exp-bullets">
+          <li>Observed and engaged with ongoing research at a life sciences company, gaining early insight into the industry landscape.</li>
+        </ul>
+        <span class="tag">Industry Exposure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="section fade-in" id="skills" style="background: var(--bg-1);">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Capabilities</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-matrix">
+    <div class="skill-cell">
+      <div class="skill-cell-icon">[β]</div>
+      <div class="skill-cell-title">Wet Lab Techniques</div>
+      <div class="skill-cell-desc">Fluorescence microscopy, Bradford/BCA assays, genotyping, cryopreservation, protein extraction, worm behavioural assays, GLP documentation.</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cell-icon">[∑]</div>
+      <div class="skill-cell-title">Data Analysis</div>
+      <div class="skill-cell-desc">R (descriptive statistics, t-tests, repeated-measures ANOVA, EMMeans, Tukey/Bonferroni corrections). MS Excel for data templates and quantification.</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cell-icon">[⌬]</div>
+      <div class="skill-cell-title">Bioinformatics</div>
+      <div class="skill-cell-desc">Molecular docking, molecular dynamics simulation, ADMET analysis via SwissADME and CADD tools. In-silico drug discovery pipelines.</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cell-icon">[λ]</div>
+      <div class="skill-cell-title">Research Areas</div>
+      <div class="skill-cell-desc">Molecular neuroscience, cancer biology (tumour microenvironment, immunology), pain pharmacology, microbiology, and genetics.</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cell-icon">[◈]</div>
+      <div class="skill-cell-title">Communication</div>
+      <div class="skill-cell-desc">80+ medical articles edited. Manuscript drafting and scientific writing. Workshop facilitation for ~90 members. Peer-Assisted Learning scheme leader.</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cell-icon">[⊕]</div>
+      <div class="skill-cell-title">Leadership & Org.</div>
+      <div class="skill-cell-desc">Department Head managing lab space, grants, and project curation. Time management, health and safety compliance, Microsoft Office Suite.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="section fade-in" id="projects">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">Research Projects</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="project-list">
+    <div class="project-item">
+      <div class="project-index">P–001</div>
+      <div>
+        <div class="project-name">Caffeine as Anti-Microbial — Nasal Microbiome Model</div>
+        <div class="project-desc">Examining caffeine's antimicrobial effects on <em>S. cerevisiae</em> and <em>S. epidermidis</em> as a model of the nasal microbiome. Acknowledged by Prof. Debby Bogaert, Centre of Inflammation Research, University of Edinburgh.</div>
+      </div>
+      <div class="project-badge badge-active">Active</div>
+    </div>
+    <div class="project-item">
+      <div class="project-index">P–002</div>
+      <div>
+        <div class="project-name">C. elegans Protein Extraction Protocol</div>
+        <div class="project-desc">Established and optimised a lysis protocol for <em>C. elegans</em> maintaining enzyme activity. Implemented Excel-based data analysis template for protein and enzyme quantification (Doitsidou Lab).</div>
+      </div>
+      <div class="project-badge badge-complete">Complete</div>
+    </div>
+    <div class="project-item">
+      <div class="project-index">P–003</div>
+      <div>
+        <div class="project-name">In-Silico Phytocompound Drug Discovery</div>
+        <div class="project-desc">Molecular docking, MD simulation, and ADMET analysis of phytocompounds targeting 5-alpha-reductase. Contributed to draft manuscript on phytochemical interactions (BioNome Pvt. Ltd.).</div>
+      </div>
+      <div class="project-badge badge-published">Manuscript</div>
+    </div>
+    <div class="project-item">
+      <div class="project-index">P–004</div>
+      <div>
+        <div class="project-name">Cortisol & Oral Health — S. salivarius Study</div>
+        <div class="project-desc">Investigated effects of cortisol on <em>S. salivarius</em> to explore stress-related changes in oral health. Secured £641 in research funding for a 6-member team (ENSA Year 1).</div>
+      </div>
+      <div class="project-badge badge-complete">Complete</div>
+    </div>
+    <div class="project-item">
+      <div class="project-index">P–005</div>
+      <div>
+        <div class="project-name">MicroRNA & Gut–Brain Axis Scoping Review</div>
+        <div class="project-desc">Contributed to a systematic scoping review examining the role of microRNAs in gut–brain axis signalling (ENSA Year 2).</div>
+      </div>
+      <div class="project-badge badge-complete">Complete</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTOGRAPHY -->
+<section class="section fade-in" id="photography">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Photography</span>
+    <div class="section-line"></div>
+  </div>
+  <p style="font-family:var(--mono);font-size:11px;color:var(--text-dimmer);letter-spacing:0.1em;margin-bottom:2rem;">ANALOGUE / FILM — PERSONAL WORK</p>
+  <div class="photo-grid">
+    <div class="photo-item photo-tall">
+      <img src="photo1.png" alt="Sketch and kindle" loading="lazy">
+      <div class="photo-overlay"><span>Study</span></div>
+    </div>
+    <div class="photo-item">
+      <img src="photo3.png" alt="Leaf on black" loading="lazy">
+      <div class="photo-overlay"><span>Specimen</span></div>
+    </div>
+    <div class="photo-item">
+      <img src="photo2.png" alt="Earphones" loading="lazy">
+      <div class="photo-overlay"><span>Signal</span></div>
+    </div>
+    <div class="photo-item photo-wide">
+      <img src="photo5.png" alt="Edinburgh clock tower" loading="lazy">
+      <div class="photo-overlay"><span>Edinburgh</span></div>
+    </div>
+    <div class="photo-item">
+      <img src="photo4.png" alt="Rose" loading="lazy">
+      <div class="photo-overlay"><span>Bloom</span></div>
+    </div>
+    <div class="photo-item">
+      <img src="photo6.png" alt="Ladybug on palm" loading="lazy">
+      <div class="photo-overlay"><span>Scale</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section fade-in" id="contact" style="background: var(--bg-1);">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">Contact</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-cell">
+      <div class="contact-label">Email</div>
+      <div class="contact-val"><a href="mailto:ananthajithrajesh@gmail.com">ananthajithrajesh@gmail.com</a></div>
+    </div>
+    <div class="contact-cell">
+      <div class="contact-label">SoundCloud</div>
+      <div class="contact-val"><a href="https://soundcloud.com/ananthajith-rajesh/sets/gaussian-blur-with-bonus" target="_blank">Gaussian Blur (with bonus)</a></div>
+    </div>
+    <div class="contact-cell">
+      <div class="contact-label">LinkedIn</div>
+      <div class="contact-val"><a href="https://www.linkedin.com/in/anan-rajesh/" target="_blank">linkedin.com/in/anan-rajesh</a></div>
+    </div>
+    <div class="contact-cell">
+      <div class="contact-label">Location</div>
+      <div class="contact-val">Edinburgh, United Kingdom</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 ANAN RAJESH — BIOMEDICAL SCIENCE, UNIVERSITY OF EDINBURGH</p>
+  <p>AVAILABLE FOR RESEARCH OPPORTUNITIES & INTERNSHIPS</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  const toggle = document.getElementById('themeToggle');
+  const label  = document.getElementById('toggleLabel');
+  toggle.addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('light');
+    label.textContent = isLight ? 'Dark' : 'Light';
+  });
+</script>
+</body>
+</html>
