@@ -17,7 +17,8 @@
     --text: #e8e8e8;
     --text-dim: #888;
     --text-dimmer: #555;
-    --accent: #c8a96e;
+    /* Palantir-inspired accent: muted amber/gold */
+    --accent: #b8925a;
     --accent-dim: #7a6240;
     --accent-red: #c85a4a;
     --accent-green: #6ea87a;
@@ -36,6 +37,7 @@
     font-size: 14px;
     line-height: 1.6;
     overflow-x: hidden;
+    cursor: none;
   }
 
   /* Scanline overlay */
@@ -48,12 +50,42 @@
     z-index: 1000;
   }
 
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.15s ease, height 0.15s ease, background 0.15s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor.hover {
+    width: 40px;
+    height: 40px;
+    background: rgba(184, 146, 90, 0.1);
+    border-color: var(--accent);
+  }
+  .cursor-dot {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+
   /* ─── NAV ─── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
-    background: linear-gradient(135deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 40%, rgba(200,169,110,0.04) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 40%, rgba(184,146,90,0.04) 100%);
     backdrop-filter: blur(28px) saturate(160%) brightness(1.08);
     -webkit-backdrop-filter: blur(28px) saturate(160%) brightness(1.08);
     border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -79,7 +111,7 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(200,169,110,0.35) 25%, rgba(90,138,180,0.35) 50%, rgba(110,168,122,0.35) 75%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(184,146,90,0.5) 25%, rgba(184,146,90,0.5) 75%, transparent 100%);
     pointer-events: none;
   }
 
@@ -90,7 +122,9 @@
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--text);
+    transition: text-shadow 0.3s ease;
   }
+  .nav-logo:hover { text-shadow: 0 0 12px rgba(184, 146, 90, 0.5); }
   .nav-logo span { color: var(--accent); }
 
   .nav-links { display: flex; gap: 0; list-style: none; }
@@ -106,9 +140,22 @@
     text-transform: uppercase;
     color: var(--text-dim);
     text-decoration: none;
-    transition: color 0.15s;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease, left 0.3s ease;
   }
   .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { width: 60%; left: 20%; }
 
   .nav-status {
     display: flex;
@@ -143,9 +190,20 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-dimmer);
-    transition: color 0.2s, border-color 0.2s;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .theme-toggle:hover { color: var(--text); border-color: var(--accent); }
+  .theme-toggle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(184, 146, 90, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--accent); box-shadow: 0 0 12px rgba(184, 146, 90, 0.3); }
+  .theme-toggle:hover::before { transform: translateX(100%); }
   .toggle-icon { font-size: 11px; line-height: 1; transition: transform 0.4s ease; }
   body.light .toggle-icon { transform: rotate(180deg); }
 
@@ -167,7 +225,7 @@
     --accent-blue: #2a5a8a;
   }
   body.light nav {
-    background: linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 40%, rgba(200,169,110,0.12) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 40%, rgba(184,146,90,0.12) 100%);
     border-bottom: 1px solid rgba(0,0,0,0.08);
     box-shadow: 0 1px 0 0 rgba(255,255,255,0.8) inset, 0 8px 32px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
     border-top: 1px solid rgba(255,255,255,0.9);
@@ -224,7 +282,9 @@
     letter-spacing: -0.02em;
     color: var(--text);
     margin-bottom: 0.25rem;
+    transition: text-shadow 0.4s ease;
   }
+  h1:hover { text-shadow: 0 0 20px rgba(184, 146, 90, 0.3); }
 
   .hero-title-line2 {
     color: var(--text-dimmer);
@@ -257,10 +317,27 @@
     border: 1px solid var(--border-bright);
     color: var(--text-dim);
     background: transparent;
-    transition: all 0.15s;
+    transition: all 0.3s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
-  .btn:hover { background: var(--bg-2); color: var(--text); border-color: var(--accent); }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(184, 146, 90, 0.15), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+  .btn:hover { 
+    background: var(--bg-2); 
+    color: var(--text); 
+    border-color: var(--accent); 
+    box-shadow: 0 0 15px rgba(184, 146, 90, 0.2), inset 0 0 10px rgba(184, 146, 90, 0.05);
+    transform: translateY(-1px);
+  }
+  .btn:hover::before { transform: translateX(100%); }
 
   .btn-primary {
     background: var(--accent);
@@ -268,7 +345,16 @@
     border-color: var(--accent);
     font-weight: 700;
   }
-  .btn-primary:hover { background: #d4b87a; border-color: #d4b87a; color: var(--bg); }
+  .btn-primary::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  }
+  .btn-primary:hover { 
+    background: #c9a66a; 
+    border-color: #c9a66a; 
+    color: var(--bg); 
+    box-shadow: 0 0 20px rgba(184, 146, 90, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
 
   .hero-right {
     display: flex;
@@ -285,6 +371,25 @@
     font-family: var(--mono);
     font-size: 12px;
     overflow: hidden;
+    transition: all 0.4s ease;
+    position: relative;
+  }
+  .terminal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    transition: border-color 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .terminal:hover {
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 30px rgba(184, 146, 90, 0.15), 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+  }
+  .terminal:hover::before {
+    border-color: rgba(184, 146, 90, 0.3);
   }
 
   .terminal-bar {
@@ -296,22 +401,26 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .t-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .t-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.3s ease; }
   .t-dot.r { background: #c85a4a; }
   .t-dot.y { background: #c8a96e; }
   .t-dot.g { background: #6ea87a; }
+  .terminal:hover .t-dot { transform: scale(1.2); }
+  .terminal:hover .t-dot.r { box-shadow: 0 0 8px #c85a4a; }
+  .terminal:hover .t-dot.y { box-shadow: 0 0 8px #c8a96e; }
+  .terminal:hover .t-dot.g { box-shadow: 0 0 8px #6ea87a; }
   .terminal-label { margin-left: auto; font-size: 10px; color: var(--text-dimmer); letter-spacing: 0.1em; }
-  .terminal-body { padding: 1.25rem 1.5rem; line-height: 1.9; }
+  .terminal-body { padding: 1.25rem 1.5rem; line-height: 1.9; min-height: 320px; }
 
   .t-comment { color: var(--text-dimmer); }
   .t-key { color: var(--accent-blue); }
   .t-val { color: var(--accent-green); }
-  .t-str { color: var(--accent); }
+  .t-str { color: #c8a96e; }
   .t-num { color: var(--accent-red); }
   .t-bracket { color: var(--text-dimmer); }
   .t-cursor {
     display: inline-block; width: 8px; height: 14px;
-    background: var(--accent);
+    background: #c8a96e;
     animation: blink 1s step-end infinite;
     vertical-align: text-bottom; margin-left: 2px;
   }
@@ -326,10 +435,20 @@
     margin-top: 1rem;
   }
 
-  .meta-cell { background: var(--bg); padding: 1rem; }
+  .meta-cell { 
+    background: var(--bg); 
+    padding: 1rem; 
+    transition: all 0.3s ease;
+  }
+  .meta-cell:hover {
+    background: var(--bg-2);
+  }
   .meta-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 0.4rem; }
-  .meta-val { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  .meta-val { font-family: var(--mono); font-size: 13px; color: var(--text); transition: color 0.3s ease; }
   .meta-val.accent { color: var(--accent); }
+  .meta-cell:hover .meta-val.accent {
+    text-shadow: 0 0 8px rgba(184, 146, 90, 0.4);
+  }
 
   /* ─── SECTIONS ─── */
   .section { border-top: 1px solid var(--border); padding: 5rem 5rem; }
@@ -345,42 +464,192 @@
   .exp-item:not(:last-child) .exp-date,
   .exp-item:not(:last-child) .exp-content { border-bottom: 1px solid var(--border); }
 
-  .exp-date { padding: 2rem 2rem 2rem 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
-  .exp-date-range { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.08em; }
+  .exp-date { 
+    padding: 2rem 2rem 2rem 0; 
+    border-right: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+  }
+  .exp-item:hover .exp-date {
+    background: linear-gradient(90deg, transparent, rgba(184, 146, 90, 0.03), transparent);
+  }
+  .exp-date-range { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.08em; transition: all 0.3s ease; }
+  .exp-item:hover .exp-date-range {
+    text-shadow: 0 0 8px rgba(184, 146, 90, 0.4);
+    letter-spacing: 0.12em;
+  }
   .exp-date-org { font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); }
-  .exp-content { padding: 2rem 0 2rem 2rem; }
-  .exp-role { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; letter-spacing: 0.03em; }
+  .exp-content { 
+    padding: 2rem 0 2rem 2rem; 
+    transition: all 0.3s ease;
+  }
+  .exp-item:hover .exp-content {
+    background: linear-gradient(90deg, rgba(184, 146, 90, 0.02), transparent);
+  }
+  .exp-role { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; letter-spacing: 0.03em; transition: all 0.3s ease; }
+  .exp-item:hover .exp-role {
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(184, 146, 90, 0.2);
+  }
   .exp-org { font-family: var(--sans); font-size: 12px; color: var(--text-dimmer); margin-bottom: 1rem; letter-spacing: 0.02em; }
 
   .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
-  .exp-bullets li { font-size: 13px; color: var(--text-dim); line-height: 1.6; padding-left: 1.2rem; position: relative; }
-  .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--accent-dim); font-family: var(--mono); }
+  .exp-bullets li { font-size: 13px; color: var(--text-dim); line-height: 1.6; padding-left: 1.2rem; position: relative; transition: all 0.3s ease; }
+  .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--accent-dim); font-family: var(--mono); transition: all 0.3s ease; }
+  .exp-item:hover .exp-bullets li::before {
+    color: var(--accent);
+    text-shadow: 0 0 6px rgba(184, 146, 90, 0.5);
+  }
 
-  .tag { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid var(--border-bright); color: var(--text-dimmer); margin-right: 0.35rem; margin-top: 0.75rem; }
+  .tag { 
+    display: inline-block; 
+    font-family: var(--mono); 
+    font-size: 9px; 
+    letter-spacing: 0.1em; 
+    text-transform: uppercase; 
+    padding: 0.2rem 0.5rem; 
+    border: 1px solid var(--border-bright); 
+    color: var(--text-dimmer); 
+    margin-right: 0.35rem; 
+    margin-top: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+  .tag:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
   .tag.green { border-color: var(--accent-green); color: var(--accent-green); }
+  .tag.green:hover { box-shadow: 0 4px 12px rgba(110, 168, 122, 0.3), 0 0 10px rgba(110, 168, 122, 0.2); }
   .tag.blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .tag.blue:hover { box-shadow: 0 4px 12px rgba(90, 138, 180, 0.3), 0 0 10px rgba(90, 138, 180, 0.2); }
   .tag.amber { border-color: var(--accent); color: var(--accent); }
+  .tag.amber:hover { box-shadow: 0 4px 12px rgba(184, 146, 90, 0.3), 0 0 10px rgba(184, 146, 90, 0.2); }
 
   /* ─── SKILLS ─── */
   .skills-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
-  .skill-cell { background: var(--bg-1); padding: 1.75rem; transition: background 0.15s; }
-  .skill-cell:hover { background: var(--bg-2); }
-  .skill-cell-icon { font-family: var(--mono); font-size: 18px; color: var(--accent); margin-bottom: 0.75rem; }
+  .skill-cell { 
+    background: var(--bg-1); 
+    padding: 1.75rem; 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .skill-cell:hover { 
+    background: var(--bg-2); 
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(184, 146, 90, 0.1);
+  }
+  .skill-cell:hover::before {
+    transform: scaleX(1);
+  }
+  .skill-cell-icon { 
+    font-family: var(--mono); 
+    font-size: 18px; 
+    color: var(--accent); 
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+  }
+  .skill-cell:hover .skill-cell-icon {
+    transform: scale(1.1);
+    text-shadow: 0 0 12px rgba(184, 146, 90, 0.5);
+  }
   .skill-cell-title { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); margin-bottom: 0.5rem; }
   .skill-cell-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
 
   /* ─── PROJECTS ─── */
   .project-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
-  .project-item { display: grid; grid-template-columns: 80px 1fr auto; align-items: start; gap: 2rem; padding: 1.75rem 2rem; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .project-item { 
+    display: grid; 
+    grid-template-columns: 80px 1fr auto; 
+    align-items: start; 
+    gap: 2rem; 
+    padding: 1.75rem 2rem; 
+    border-bottom: 1px solid var(--border); 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .project-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent));
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.4s ease;
+  }
   .project-item:last-child { border-bottom: none; }
-  .project-item:hover { background: var(--bg-2); }
-  .project-index { font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); padding-top: 2px; }
-  .project-name { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+  .project-item:hover { 
+    background: var(--bg-2); 
+    transform: translateX(4px);
+    box-shadow: -4px 0 20px rgba(184, 146, 90, 0.1);
+  }
+  .project-item:hover::before {
+    transform: scaleY(1);
+  }
+  .project-index { 
+    font-family: var(--mono); 
+    font-size: 10px; 
+    color: var(--text-dimmer); 
+    padding-top: 2px;
+    transition: all 0.3s ease;
+  }
+  .project-item:hover .project-index {
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(184, 146, 90, 0.4);
+  }
+  .project-name { 
+    font-family: var(--mono); 
+    font-size: 13px; 
+    font-weight: 600; 
+    color: var(--text); 
+    margin-bottom: 0.3rem;
+    transition: all 0.3s ease;
+  }
+  .project-item:hover .project-name {
+    color: var(--accent);
+  }
   .project-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
-  .project-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.6rem; border: 1px solid; white-space: nowrap; }
+  .project-badge { 
+    font-family: var(--mono); 
+    font-size: 9px; 
+    letter-spacing: 0.1em; 
+    text-transform: uppercase; 
+    padding: 0.3rem 0.6rem; 
+    border: 1px solid; 
+    white-space: nowrap;
+    transition: all 0.3s ease;
+  }
+  .project-item:hover .project-badge {
+    transform: scale(1.05);
+  }
   .badge-active { color: var(--accent-green); border-color: var(--accent-green); }
+  .project-item:hover .badge-active {
+    box-shadow: 0 0 12px rgba(110, 168, 122, 0.3);
+  }
   .badge-complete { color: var(--text-dimmer); border-color: var(--border-bright); }
   .badge-published { color: var(--accent-blue); border-color: var(--accent-blue); }
+  .project-item:hover .badge-published {
+    box-shadow: 0 0 12px rgba(90, 138, 180, 0.3);
+  }
 
   /* ─── PHOTO GRID ─── */
   .photo-grid {
@@ -392,30 +661,145 @@
   .photo-item { position: relative; overflow: hidden; background: var(--bg-3); cursor: pointer; }
   .photo-item.photo-tall { grid-row: span 2; }
   .photo-item.photo-wide { grid-column: span 2; }
-  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(100%) contrast(1.05); transition: transform 0.5s ease, filter 0.4s ease; }
-  .photo-item:hover img { transform: scale(1.04); filter: grayscale(80%) contrast(1.1); }
-  .photo-overlay { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 1rem; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%); opacity: 0; transition: opacity 0.3s ease; }
-  .photo-item:hover .photo-overlay { opacity: 1; }
-  .photo-overlay span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(100%) contrast(1.05); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.4s ease; }
+  .photo-item:hover img { transform: scale(1.08); filter: grayscale(60%) contrast(1.15) brightness(1.1); }
+  .photo-overlay { 
+    position: absolute; 
+    inset: 0; 
+    display: flex; 
+    align-items: flex-end; 
+    padding: 1rem; 
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); 
+    opacity: 0; 
+    transition: all 0.4s ease;
+    transform: translateY(10px);
+  }
+  .photo-item:hover .photo-overlay { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .photo-overlay span { 
+    font-family: var(--mono); 
+    font-size: 10px; 
+    letter-spacing: 0.15em; 
+    text-transform: uppercase; 
+    color: rgba(255,255,255,0.9);
+    transition: all 0.3s ease;
+  }
+  .photo-item:hover .photo-overlay span {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.2em;
+  }
 
   /* ─── CONTACT ─── */
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
-  .contact-cell { background: var(--bg-1); padding: 2.5rem; }
+  .contact-cell { 
+    background: var(--bg-1); 
+    padding: 2.5rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-cell::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .contact-cell:hover {
+    background: var(--bg-2);
+    transform: translateY(-2px);
+  }
+  .contact-cell:hover::after {
+    transform: scaleX(1);
+  }
   .contact-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 0.6rem; }
   .contact-val { font-family: var(--mono); font-size: 14px; color: var(--text); }
-  .contact-val a { color: var(--accent); text-decoration: none; }
-  .contact-val a:hover { text-decoration: underline; }
+  .contact-val a { 
+    color: var(--accent); 
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .contact-val a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .contact-val a:hover { 
+    text-shadow: 0 0 10px rgba(184, 146, 90, 0.4);
+  }
+  .contact-val a:hover::after {
+    width: 100%;
+  }
 
   /* ─── FOOTER ─── */
-  footer { border-top: 1px solid var(--border); padding: 1.5rem 5rem; display: flex; justify-content: space-between; align-items: center; }
+  footer { 
+    border-top: 1px solid var(--border); 
+    padding: 1.5rem 5rem; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: footerShine 4s ease-in-out infinite;
+  }
+  @keyframes footerShine {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+  }
   footer p { font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); letter-spacing: 0.1em; }
 
   /* ─── ANIMATIONS ─── */
   .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .fade-in.visible { opacity: 1; transform: none; }
+
+  /* Interactive Particle Canvas */
+  #particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* Typing cursor for terminal */
+  .typing .t-cursor {
+    animation: blink 0.8s step-end infinite;
+  }
 </style>
 </head>
 <body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Particle Canvas Background -->
+<canvas id="particleCanvas"></canvas>
 
 <!-- NAV -->
 <nav>
@@ -456,32 +840,15 @@
   </div>
 
   <div class="hero-right">
-    <div class="terminal">
+    <div class="terminal" id="terminal">
       <div class="terminal-bar">
         <div class="t-dot r"></div>
         <div class="t-dot y"></div>
         <div class="t-dot g"></div>
         <div class="terminal-label">PROFILE.json</div>
       </div>
-      <div class="terminal-body">
-        <span class="t-bracket">{</span><br>
-        &nbsp;&nbsp;<span class="t-key">"name"</span><span class="t-bracket">:</span> <span class="t-str">"Anan Rajesh"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"location"</span><span class="t-bracket">:</span> <span class="t-str">"Edinburgh, UK"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"institution"</span><span class="t-bracket">:</span> <span class="t-str">"University of Edinburgh"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"degree"</span><span class="t-bracket">:</span> <span class="t-str">"BSc Hons. Biomedical Science"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"year"</span><span class="t-bracket">:</span> <span class="t-num">3</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"articles_edited"</span><span class="t-bracket">:</span> <span class="t-num">80</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"research_funding"</span><span class="t-bracket">:</span> <span class="t-str">"£641"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"society_members_led"</span><span class="t-bracket">:</span> <span class="t-num">90</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"soundcloud"</span><span class="t-bracket">:</span> <span class="t-str">"gaussian-blur-with-bonus"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;<span class="t-key">"focus"</span><span class="t-bracket">: [</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"molecular neuroscience"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"cancer biology"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"bioinformatics"</span><span class="t-bracket">,</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"drug discovery"</span><br>
-        &nbsp;&nbsp;<span class="t-bracket">],</span><br>
-        &nbsp;&nbsp;<span class="t-key">"status"</span><span class="t-bracket">:</span> <span class="t-val">"open_to_opportunities"</span><br>
-        <span class="t-bracket">}</span><span class="t-cursor"></span>
+      <div class="terminal-body" id="terminalBody">
+        <span id="terminalContent"></span><span class="t-cursor"></span>
       </div>
     </div>
 
@@ -491,7 +858,7 @@
         <div class="meta-val accent">Biology Dept. Head</div>
       </div>
       <div class="meta-cell">
-        <div class="meta-label">ENSA</div>
+        <div class="meta-label">ESRA</div>
         <div class="meta-val">Oct 2023 – Present</div>
       </div>
       <div class="meta-cell">
@@ -698,7 +1065,7 @@
       <div class="project-index">P–004</div>
       <div>
         <div class="project-name">Cortisol & Oral Health — S. salivarius Study</div>
-        <div class="project-desc">Investigated effects of cortisol on <em>S. salivarius</em> to explore stress-related changes in oral health. Secured £641 in research funding for a 6-member team (ENSA Year 1).</div>
+        <div class="project-desc">Investigated effects of cortisol on <em>S. salivarius</em> to explore stress-related changes in oral health. Secured £641 in research funding for a 6-member team (ESRA Year 1).</div>
       </div>
       <div class="project-badge badge-complete">Complete</div>
     </div>
@@ -706,7 +1073,15 @@
       <div class="project-index">P–005</div>
       <div>
         <div class="project-name">MicroRNA & Gut–Brain Axis Scoping Review</div>
-        <div class="project-desc">Contributed to a systematic scoping review examining the role of microRNAs in gut–brain axis signalling (ENSA Year 2).</div>
+        <div class="project-desc">Contributed to a systematic scoping review examining the role of microRNAs in gut–brain axis signalling (ESRA Year 2).</div>
+      </div>
+      <div class="project-badge badge-complete">Complete</div>
+    </div>
+    <div class="project-item">
+      <div class="project-index">P–006</div>
+      <div>
+        <div class="project-name">Edinburgh Biohackathon — GBM Tissue Modelling</div>
+        <div class="project-desc">Developed a project on using cymatics to build concept for a GBM tissue modelling environment in space, backed with scientific rational and precedent, physics-informed simulations and a rough CAD model. Challenge by Aphelion Industries and Jamie Snape.</div>
       </div>
       <div class="project-badge badge-complete">Complete</div>
     </div>
@@ -783,17 +1158,238 @@
 </footer>
 
 <script>
+  // Fade-in observer
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
+  // Theme toggle
   const toggle = document.getElementById('themeToggle');
   const label  = document.getElementById('toggleLabel');
   toggle.addEventListener('click', () => {
     const isLight = document.body.classList.toggle('light');
     label.textContent = isLight ? 'Dark' : 'Light';
   });
+
+  // Custom Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorDot = document.getElementById('cursorDot');
+  let cursorX = 0, cursorY = 0;
+  let dotX = 0, dotY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    cursorX = e.clientX;
+    cursorY = e.clientY;
+  });
+
+  function animateCursor() {
+    // Smooth follow for the ring
+    const dx = cursorX - dotX;
+    const dy = cursorY - dotY;
+    dotX += dx * 0.15;
+    dotY += dy * 0.15;
+    
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+    cursorDot.style.left = dotX + 'px';
+    cursorDot.style.top = dotY + 'px';
+    
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Add hover effect to interactive elements
+  const interactiveElements = document.querySelectorAll('a, button, .btn, .tag, .project-item, .skill-cell, .photo-item, .contact-cell, .meta-cell');
+  interactiveElements.forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+
+  // Terminal typing animation
+  const terminalContent = `<span class="t-bracket">{</span><br>
+  &nbsp;&nbsp;<span class="t-key">"name"</span><span class="t-bracket">:</span> <span class="t-str">"Ananthajith Rajesh"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"location"</span><span class="t-bracket">:</span> <span class="t-str">"Edinburgh, UK"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"institution"</span><span class="t-bracket">:</span> <span class="t-str">"University of Edinburgh"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"degree"</span><span class="t-bracket">:</span> <span class="t-str">"BSc Hons. Biomedical Science"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"year"</span><span class="t-bracket">:</span> <span class="t-num">3</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"articles_edited"</span><span class="t-bracket">:</span> <span class="t-num">80</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"research_funding"</span><span class="t-bracket">:</span> <span class="t-str">"£641"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"society_members_led"</span><span class="t-bracket">:</span> <span class="t-num">90</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"soundcloud"</span><span class="t-bracket">:</span> <span class="t-str">"gaussian-blur-with-bonus"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;<span class="t-key">"focus"</span><span class="t-bracket">: [</span><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"molecular neuroscience"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"cancer biology"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"bioinformatics"</span><span class="t-bracket">,</span><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"drug discovery"</span><br>
+  &nbsp;&nbsp;<span class="t-bracket">],</span><br>
+  &nbsp;&nbsp;<span class="t-key">"status"</span><span class="t-bracket">:</span> <span class="t-val">"open_to_opportunities"</span><br>
+  <span class="t-bracket">}</span>`;
+
+  const terminalElement = document.getElementById('terminalContent');
+  const plainText = terminalContent.replace(/<[^>]*>/g, '');
+  const tags = terminalContent.match(/<[^>]*>/g) || [];
+  let charIndex = 0;
+  let tagIndex = 0;
+  let currentHTML = '';
+  let isTyping = true;
+
+  function typeTerminal() {
+    if (!isTyping) return;
+    
+    const textContent = terminalContent.replace(/<[^>]*>/g, '');
+    
+    if (charIndex < textContent.length) {
+      // Reconstruct HTML up to current character
+      let tempHTML = terminalContent;
+      let textCount = 0;
+      let result = '';
+      let inTag = false;
+      
+      for (let i = 0; i < terminalContent.length && textCount <= charIndex; i++) {
+        if (terminalContent[i] === '<') {
+          inTag = true;
+          result += terminalContent[i];
+        } else if (terminalContent[i] === '>') {
+          inTag = false;
+          result += terminalContent[i];
+        } else if (inTag) {
+          result += terminalContent[i];
+        } else {
+          if (textCount < charIndex) {
+            result += terminalContent[i];
+          } else if (textCount === charIndex) {
+            result += terminalContent[i];
+          }
+          textCount++;
+        }
+      }
+      
+      terminalElement.innerHTML = result;
+      charIndex++;
+      
+      // Variable typing speed for realism
+      const delay = Math.random() * 15 + 8;
+      setTimeout(typeTerminal, delay);
+    } else {
+      terminalElement.innerHTML = terminalContent;
+      isTyping = false;
+    }
+  }
+
+  // Start typing animation after a short delay
+  setTimeout(typeTerminal, 500);
+
+  // Particle Canvas Animation
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let mouseX = 0;
+  let mouseY = 0;
+  let isMouseMoving = false;
+  let mouseTimeout;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  class Particle {
+    constructor() {
+      this.reset();
+    }
+
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2 + 0.5;
+      this.speedX = (Math.random() - 0.5) * 0.3;
+      this.speedY = (Math.random() - 0.5) * 0.3;
+      this.opacity = Math.random() * 0.5 + 0.1;
+    }
+
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+
+      // Mouse interaction
+      if (isMouseMoving) {
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 150) {
+          const force = (150 - distance) / 150;
+          this.x -= dx * force * 0.02;
+          this.y -= dy * force * 0.02;
+        }
+      }
+
+      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+        this.reset();
+      }
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(184, 146, 90, ${this.opacity})`;
+      ctx.fill();
+    }
+  }
+
+  // Create particles
+  for (let i = 0; i < 50; i++) {
+    particles.push(new Particle());
+  }
+
+  // Mouse tracking
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    isMouseMoving = true;
+    clearTimeout(mouseTimeout);
+    mouseTimeout = setTimeout(() => {
+      isMouseMoving = false;
+    }, 100);
+  });
+
+  // Animation loop
+  let frameCount = 0;
+  function animate() {
+    frameCount++;
+    // Render every 2nd frame for performance (30fps)
+    if (frameCount % 2 === 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles.forEach((particle, i) => {
+        particle.update();
+        particle.draw();
+        
+        // Draw connections (only check every 5th particle for performance)
+        if (i % 5 === 0) {
+          for (let j = i + 1; j < particles.length; j += 3) {
+            const dx = particles[j].x - particle.x;
+            const dy = particles[j].y - particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 100) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(184, 146, 90, ${0.1 * (1 - distance / 100)})`;
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(particle.x, particle.y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      });
+    }
+    
+    requestAnimationFrame(animate);
+  }
+  animate();
 </script>
 </body>
 </html>
