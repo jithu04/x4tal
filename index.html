@@ -25,6 +25,7 @@
     --accent-blue: #5a8ab4;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
+    --nav-height: 48px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,6 +39,12 @@
     line-height: 1.6;
     overflow-x: hidden;
     cursor: none;
+  }
+
+  /* Hide custom cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor, .cursor-dot { display: none !important; }
   }
 
   /* Scanline overlay */
@@ -94,7 +101,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    height: 48px;
+    height: var(--nav-height);
     border-top: 1px solid rgba(255,255,255,0.10);
   }
 
@@ -123,6 +130,7 @@
     text-transform: uppercase;
     color: var(--text);
     transition: text-shadow 0.3s ease;
+    z-index: 101;
   }
   .nav-logo:hover { text-shadow: 0 0 12px rgba(184, 146, 90, 0.5); }
   .nav-logo span { color: var(--accent); }
@@ -132,8 +140,8 @@
   .nav-links a {
     display: block;
     padding: 0 1.25rem;
-    height: 48px;
-    line-height: 48px;
+    height: var(--nav-height);
+    line-height: var(--nav-height);
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.12em;
@@ -156,6 +164,8 @@
   }
   .nav-links a:hover { color: var(--text); }
   .nav-links a:hover::after { width: 60%; left: 20%; }
+
+  .nav-right { display: flex; align-items: center; }
 
   .nav-status {
     display: flex;
@@ -207,6 +217,88 @@
   .toggle-icon { font-size: 11px; line-height: 1; transition: transform 0.4s ease; }
   body.light .toggle-icon { transform: rotate(180deg); }
 
+  /* ─── HAMBURGER MENU ─── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: var(--nav-height);
+    cursor: pointer;
+    z-index: 101;
+    background: none;
+    border: none;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hamburger-line {
+    width: 18px;
+    height: 1.5px;
+    background: var(--text-dim);
+    transition: all 0.3s ease;
+    border-radius: 1px;
+  }
+  .hamburger-line + .hamburger-line { margin-top: 5px; }
+  .hamburger.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(2.5px, 2.5px);
+  }
+  .hamburger.active .hamburger-line:nth-child(2) { opacity: 0; }
+  .hamburger.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(2.5px, -2.5px);
+  }
+
+  /* Mobile nav overlay */
+  .nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: var(--nav-height);
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 99;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .nav-overlay.open {
+    display: flex;
+    opacity: 1;
+  }
+  .nav-overlay a {
+    display: block;
+    padding: 1.25rem 2rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-overlay a:hover,
+  .nav-overlay a:active {
+    color: var(--accent);
+  }
+  .nav-overlay .nav-status-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dimmer);
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
   /* ─── LIGHT MODE ─── */
   body.light {
     --bg: #f2f0ec;
@@ -245,7 +337,7 @@
   /* ─── HERO ─── */
   .hero {
     min-height: 100vh;
-    padding-top: 48px;
+    padding-top: var(--nav-height);
     display: grid;
     grid-template-columns: 1fr 1fr;
     position: relative;
@@ -321,6 +413,8 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    display: inline-block;
+    -webkit-tap-highlight-color: transparent;
   }
   .btn::before {
     content: '';
@@ -790,6 +884,374 @@
   .typing .t-cursor {
     animation: blink 0.8s step-end infinite;
   }
+
+  /* ═══════════════════════════════════════════════
+     MOBILE RESPONSIVE — BREAKPOINTS
+     ═══════════════════════════════════════════════ */
+
+  /* ─── Tablet & below: 768px ─── */
+  @media (max-width: 768px) {
+    /* Nav: show hamburger, hide links */
+    .hamburger { display: flex; }
+    .nav-links { display: none; }
+    .nav-status { display: none; }
+    .nav-right .theme-toggle {
+      margin-left: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+    nav { padding: 0 1.25rem; }
+
+    /* Hero: stack vertically */
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .hero-left {
+      padding: 4rem 1.5rem 3rem;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-right {
+      padding: 2rem 1.5rem 3rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 10vw, 3rem);
+    }
+    .hero-title-line2 {
+      font-size: clamp(0.85rem, 3vw, 1.2rem);
+      margin-bottom: 1.5rem;
+    }
+    .hero-desc {
+      font-size: 13px;
+      max-width: none;
+      margin-bottom: 2rem;
+    }
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .btn {
+      padding: 0.7rem 1rem;
+      font-size: 10px;
+    }
+
+    /* Terminal */
+    .terminal { font-size: 11px; }
+    .terminal-body {
+      min-height: 220px;
+      padding: 1rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Hero meta: keep 2 columns but smaller */
+    .hero-meta { margin-top: 1rem; }
+    .meta-cell { padding: 0.75rem; }
+    .meta-label { font-size: 8px; }
+    .meta-val { font-size: 11px; }
+
+    /* Sections */
+    .section {
+      padding: 3rem 1.5rem;
+    }
+    .section-header { margin-bottom: 2rem; gap: 1rem; }
+
+    /* Experience: stack date above content */
+    .exp-grid {
+      grid-template-columns: 1fr;
+    }
+    .exp-item { display: block; }
+    .exp-item:not(:last-child) .exp-date,
+    .exp-item:not(:last-child) .exp-content { border-bottom: none; }
+    .exp-date {
+      padding: 1.25rem 0 0.5rem;
+      border-right: none;
+      flex-direction: row;
+      gap: 0.75rem;
+      align-items: baseline;
+    }
+    .exp-content { padding: 0.5rem 0 1.5rem; }
+    .exp-role { font-size: 13px; }
+    .exp-bullets li { font-size: 12px; }
+    .exp-item:not(:last-child) .exp-content { border-bottom: 1px solid var(--border); }
+
+    /* Skills: 2 columns */
+    .skills-matrix { grid-template-columns: 1fr 1fr; }
+    .skill-cell { padding: 1.25rem; }
+    .skill-cell-icon { font-size: 16px; }
+    .skill-cell-title { font-size: 10px; }
+    .skill-cell-desc { font-size: 11px; }
+
+    /* Projects: adjust grid */
+    .project-item {
+      grid-template-columns: 60px 1fr;
+      gap: 1rem;
+      padding: 1.25rem 1rem;
+    }
+    .project-badge {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+
+    /* Photo grid: 2 columns */
+    .photo-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: 200px;
+    }
+    .photo-item.photo-tall { grid-row: span 1; }
+    .photo-item.photo-wide { grid-column: span 2; }
+    .photo-overlay { opacity: 1; transform: none; }
+
+    /* Contact: stack */
+    .contact-grid { grid-template-columns: 1fr; }
+    .contact-cell { padding: 1.5rem; }
+    .contact-val { font-size: 12px; word-break: break-all; }
+
+    /* Footer */
+    footer {
+      padding: 1.25rem 1.5rem;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+    footer p { font-size: 9px; }
+
+    /* Particle canvas: reduce opacity on mobile */
+    #particleCanvas { opacity: 0.2; }
+  }
+
+  /* ─── Small phone: 480px ─── */
+  @media (max-width: 480px) {
+    nav { padding: 0 1rem; }
+    .nav-logo { font-size: 10px; letter-spacing: 0.1em; }
+
+    .hero-left { padding: 3rem 1rem 2.5rem; }
+    .hero-right { padding: 1.5rem 1rem 2.5rem; }
+
+    h1 {
+      font-size: clamp(1.8rem, 10vw, 2.5rem);
+    }
+
+    .hero-desc {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .hero-ctas {
+      flex-direction: column;
+    }
+    .btn {
+      text-align: center;
+      width: 100%;
+      padding: 0.75rem 1rem;
+    }
+
+    /* Terminal: smaller */
+    .terminal { font-size: 10px; }
+    .terminal-body {
+      min-height: 180px;
+      padding: 0.75rem;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+    .terminal-label { font-size: 8px; }
+
+    /* Hero meta: single column */
+    .hero-meta { grid-template-columns: 1fr; }
+    .meta-cell { padding: 0.65rem 0.75rem; }
+
+    /* Sections */
+    .section {
+      padding: 2.5rem 1rem;
+    }
+    .section-header {
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .section-line { order: 3; width: 100%; margin-top: 0.5rem; }
+
+    /* Experience */
+    .exp-date { padding: 1rem 0 0.35rem; }
+    .exp-content { padding: 0.35rem 0 1.25rem; }
+    .exp-role { font-size: 12px; }
+    .exp-bullets li { font-size: 12px; line-height: 1.5; }
+    .tag { font-size: 8px; padding: 0.15rem 0.4rem; margin-top: 0.5rem; }
+
+    /* Skills: single column */
+    .skills-matrix { grid-template-columns: 1fr; }
+    .skill-cell { padding: 1.25rem; }
+
+    /* Projects */
+    .project-item {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding: 1.25rem 0.75rem;
+    }
+    .project-index {
+      font-size: 9px;
+    }
+    .project-name { font-size: 12px; }
+    .project-desc { font-size: 11px; }
+
+    /* Photo grid: single column, uniform height */
+    .photo-grid {
+      grid-template-columns: 1fr;
+      grid-auto-rows: 220px;
+      gap: 2px;
+    }
+    .photo-item.photo-wide { grid-column: span 1; }
+
+    /* Contact */
+    .contact-cell { padding: 1.25rem; }
+    .contact-val { font-size: 11px; }
+    .contact-label { font-size: 8px; }
+
+    /* Footer */
+    footer { padding: 1rem; }
+    footer p { font-size: 8px; letter-spacing: 0.06em; }
+  }
+
+  /* ─── Very small devices: 360px ─── */
+  @media (max-width: 360px) {
+    .nav-logo { font-size: 9px; }
+    .hero-left { padding: 2.5rem 0.75rem 2rem; }
+    .hero-right { padding: 1.25rem 0.75rem 2rem; }
+    .terminal-body { font-size: 9px; min-height: 160px; }
+    .section { padding: 2rem 0.75rem; }
+    .exp-bullets li { font-size: 11px; }
+    .project-name { font-size: 11px; }
+    .project-desc { font-size: 10px; }
+  }
+
+  /* ─── Landscape phones ─── */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+      min-height: auto;
+    }
+    .hero-left {
+      padding: 3rem 2rem 2rem;
+    }
+    .hero-right {
+      padding: 2rem;
+    }
+    .terminal-body { min-height: 150px; }
+  }
+
+  /* ─── Touch device hover overrides ─── */
+  @media (hover: none) and (pointer: coarse) {
+    .tag:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .skill-cell:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .skill-cell:hover::before {
+      transform: scaleX(0);
+    }
+    .project-item:hover {
+      background: transparent;
+      transform: none;
+      box-shadow: none;
+    }
+    .project-item:hover::before {
+      transform: scaleY(0);
+    }
+    .project-item:hover .project-index {
+      color: var(--text-dimmer);
+      text-shadow: none;
+    }
+    .project-item:hover .project-name {
+      color: var(--text);
+    }
+    .project-item:hover .project-badge {
+      transform: none;
+    }
+    .meta-cell:hover .meta-val.accent {
+      text-shadow: none;
+    }
+    .contact-cell:hover {
+      background: var(--bg-1);
+      transform: none;
+    }
+    .contact-cell:hover::after {
+      transform: scaleX(0);
+    }
+    .photo-item img {
+      filter: grayscale(70%) contrast(1.05);
+    }
+    .photo-item:hover img {
+      transform: none;
+      filter: grayscale(70%) contrast(1.05);
+    }
+    .photo-overlay {
+      opacity: 1;
+      transform: none;
+    }
+    .btn:hover {
+      background: transparent;
+      color: var(--text-dim);
+      border-color: var(--border-bright);
+      box-shadow: none;
+      transform: none;
+    }
+    .btn-primary:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+      box-shadow: none;
+      transform: none;
+    }
+    .exp-item:hover .exp-role {
+      color: var(--text);
+      text-shadow: none;
+    }
+    .exp-item:hover .exp-bullets li::before {
+      color: var(--accent-dim);
+      text-shadow: none;
+    }
+    .exp-item:hover .exp-date {
+      background: transparent;
+    }
+    .exp-item:hover .exp-date-range {
+      text-shadow: none;
+      letter-spacing: 0.08em;
+    }
+    .exp-item:hover .exp-content {
+      background: transparent;
+    }
+    .terminal:hover {
+      border-color: var(--border);
+      box-shadow: none;
+      transform: none;
+    }
+    .terminal:hover .t-dot {
+      transform: none;
+    }
+    .terminal:hover .t-dot.r { box-shadow: none; }
+    .terminal:hover .t-dot.y { box-shadow: none; }
+    .terminal:hover .t-dot.g { box-shadow: none; }
+  }
+
+  /* ─── Safe area insets for notched phones ─── */
+  @supports (padding-top: env(safe-area-inset-top)) {
+    nav {
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+    .hero-left { padding-top: max(4rem, calc(3rem + env(safe-area-inset-top))); }
+    footer {
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    .contact-cell:last-child {
+      margin-bottom: env(safe-area-inset-bottom, 0);
+    }
+  }
 </style>
 </head>
 <body>
@@ -811,15 +1273,35 @@
     <li><a href="#photography">Photography</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    Available for opportunities
+  <div class="nav-right">
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      Available for opportunities
+    </div>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
       <span class="toggle-icon">◐</span>
       <span id="toggleLabel">Light</span>
     </button>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile Nav Overlay -->
+<div class="nav-overlay" id="navOverlay">
+  <a href="#experience">Experience</a>
+  <a href="#skills">Capabilities</a>
+  <a href="#projects">Projects</a>
+  <a href="#photography">Photography</a>
+  <a href="#contact">Contact</a>
+  <div class="nav-status-mobile">
+    <div class="status-dot"></div>
+    Available for opportunities
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -1158,13 +1640,13 @@
 </footer>
 
 <script>
-  // Fade-in observer
+  // ─── Fade-in observer ───
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Theme toggle
+  // ─── Theme toggle ───
   const toggle = document.getElementById('themeToggle');
   const label  = document.getElementById('toggleLabel');
   toggle.addEventListener('click', () => {
@@ -1172,41 +1654,94 @@
     label.textContent = isLight ? 'Dark' : 'Light';
   });
 
-  // Custom Cursor
-  const cursor = document.getElementById('cursor');
-  const cursorDot = document.getElementById('cursorDot');
-  let cursorX = 0, cursorY = 0;
-  let dotX = 0, dotY = 0;
+  // ─── Hamburger menu ───
+  const hamburger = document.getElementById('hamburger');
+  const navOverlay = document.getElementById('navOverlay');
+  const navOverlayLinks = navOverlay.querySelectorAll('a');
+  let isMenuOpen = false;
 
-  document.addEventListener('mousemove', (e) => {
-    cursorX = e.clientX;
-    cursorY = e.clientY;
-  });
-
-  function animateCursor() {
-    // Smooth follow for the ring
-    const dx = cursorX - dotX;
-    const dy = cursorY - dotY;
-    dotX += dx * 0.15;
-    dotY += dy * 0.15;
+  function toggleMenu() {
+    isMenuOpen = !isMenuOpen;
+    hamburger.classList.toggle('active', isMenuOpen);
+    hamburger.setAttribute('aria-expanded', isMenuOpen);
     
-    cursor.style.left = cursorX + 'px';
-    cursor.style.top = cursorY + 'px';
-    cursorDot.style.left = dotX + 'px';
-    cursorDot.style.top = dotY + 'px';
-    
-    requestAnimationFrame(animateCursor);
+    if (isMenuOpen) {
+      navOverlay.style.display = 'flex';
+      // Force reflow for transition
+      navOverlay.offsetHeight;
+      navOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    } else {
+      navOverlay.classList.remove('open');
+      setTimeout(() => {
+        if (!isMenuOpen) navOverlay.style.display = 'none';
+      }, 300);
+      document.body.style.overflow = '';
+    }
   }
-  animateCursor();
 
-  // Add hover effect to interactive elements
-  const interactiveElements = document.querySelectorAll('a, button, .btn, .tag, .project-item, .skill-cell, .photo-item, .contact-cell, .meta-cell');
-  interactiveElements.forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  hamburger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
   });
 
-  // Terminal typing animation
+  // Close menu when a link is clicked
+  navOverlayLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (isMenuOpen) toggleMenu();
+    });
+  });
+
+  // Close menu on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isMenuOpen) toggleMenu();
+  });
+
+  // ─── Detect touch device ───
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+  // ─── Custom Cursor (desktop only) ───
+  if (!isTouchDevice) {
+    const cursor = document.getElementById('cursor');
+    const cursorDot = document.getElementById('cursorDot');
+    let cursorX = 0, cursorY = 0;
+    let dotX = 0, dotY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+    });
+
+    function animateCursor() {
+      const dx = cursorX - dotX;
+      const dy = cursorY - dotY;
+      dotX += dx * 0.15;
+      dotY += dy * 0.15;
+      
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+      cursorDot.style.left = dotX + 'px';
+      cursorDot.style.top = dotY + 'px';
+      
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Add hover effect to interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, .btn, .tag, .project-item, .skill-cell, .photo-item, .contact-cell, .meta-cell');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+  } else {
+    // Remove cursor elements on touch devices
+    const cursor = document.getElementById('cursor');
+    const cursorDot = document.getElementById('cursorDot');
+    if (cursor) cursor.remove();
+    if (cursorDot) cursorDot.remove();
+  }
+
+  // ─── Terminal typing animation ───
   const terminalContent = `<span class="t-bracket">{</span><br>
   &nbsp;&nbsp;<span class="t-key">"name"</span><span class="t-bracket">:</span> <span class="t-str">"Ananthajith Rajesh"</span><span class="t-bracket">,</span><br>
   &nbsp;&nbsp;<span class="t-key">"location"</span><span class="t-bracket">:</span> <span class="t-str">"Edinburgh, UK"</span><span class="t-bracket">,</span><br>
@@ -1227,21 +1762,13 @@
   <span class="t-bracket">}</span>`;
 
   const terminalElement = document.getElementById('terminalContent');
-  const plainText = terminalContent.replace(/<[^>]*>/g, '');
-  const tags = terminalContent.match(/<[^>]*>/g) || [];
   let charIndex = 0;
-  let tagIndex = 0;
-  let currentHTML = '';
   let isTyping = true;
 
   function typeTerminal() {
     if (!isTyping) return;
     
-    const textContent = terminalContent.replace(/<[^>]*>/g, '');
-    
-    if (charIndex < textContent.length) {
-      // Reconstruct HTML up to current character
-      let tempHTML = terminalContent;
+    if (charIndex < terminalContent.length) {
       let textCount = 0;
       let result = '';
       let inTag = false;
@@ -1256,9 +1783,7 @@
         } else if (inTag) {
           result += terminalContent[i];
         } else {
-          if (textCount < charIndex) {
-            result += terminalContent[i];
-          } else if (textCount === charIndex) {
+          if (textCount <= charIndex) {
             result += terminalContent[i];
           }
           textCount++;
@@ -1268,7 +1793,6 @@
       terminalElement.innerHTML = result;
       charIndex++;
       
-      // Variable typing speed for realism
       const delay = Math.random() * 15 + 8;
       setTimeout(typeTerminal, delay);
     } else {
@@ -1280,7 +1804,7 @@
   // Start typing animation after a short delay
   setTimeout(typeTerminal, 500);
 
-  // Particle Canvas Animation
+  // ─── Particle Canvas (performance-optimized for mobile) ───
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
   let particles = [];
@@ -1288,6 +1812,16 @@
   let mouseY = 0;
   let isMouseMoving = false;
   let mouseTimeout;
+  let particleCount = 50;
+  let connectionDistance = 100;
+  let animFrameSkip = 2; // render every Nth frame
+
+  // Reduce particles on mobile for performance
+  if (window.innerWidth < 768) {
+    particleCount = 20;
+    connectionDistance = 80;
+    animFrameSkip = 3;
+  }
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -1314,8 +1848,7 @@
       this.x += this.speedX;
       this.y += this.speedY;
 
-      // Mouse interaction
-      if (isMouseMoving) {
+      if (!isTouchDevice && isMouseMoving) {
         const dx = mouseX - this.x;
         const dy = mouseY - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -1340,43 +1873,44 @@
   }
 
   // Create particles
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < particleCount; i++) {
     particles.push(new Particle());
   }
 
-  // Mouse tracking
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    isMouseMoving = true;
-    clearTimeout(mouseTimeout);
-    mouseTimeout = setTimeout(() => {
-      isMouseMoving = false;
-    }, 100);
-  });
+  // Mouse tracking (desktop only)
+  if (!isTouchDevice) {
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      isMouseMoving = true;
+      clearTimeout(mouseTimeout);
+      mouseTimeout = setTimeout(() => {
+        isMouseMoving = false;
+      }, 100);
+    });
+  }
 
   // Animation loop
   let frameCount = 0;
   function animate() {
     frameCount++;
-    // Render every 2nd frame for performance (30fps)
-    if (frameCount % 2 === 0) {
+    if (frameCount % animFrameSkip === 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       particles.forEach((particle, i) => {
         particle.update();
         particle.draw();
         
-        // Draw connections (only check every 5th particle for performance)
-        if (i % 5 === 0) {
+        // Draw connections (skip some for performance)
+        if (i % (window.innerWidth < 768 ? 4 : 5) === 0) {
           for (let j = i + 1; j < particles.length; j += 3) {
             const dx = particles[j].x - particle.x;
             const dy = particles[j].y - particle.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            if (distance < 100) {
+            if (distance < connectionDistance) {
               ctx.beginPath();
-              ctx.strokeStyle = `rgba(184, 146, 90, ${0.1 * (1 - distance / 100)})`;
+              ctx.strokeStyle = `rgba(184, 146, 90, ${0.1 * (1 - distance / connectionDistance)})`;
               ctx.lineWidth = 0.5;
               ctx.moveTo(particle.x, particle.y);
               ctx.lineTo(particles[j].x, particles[j].y);
